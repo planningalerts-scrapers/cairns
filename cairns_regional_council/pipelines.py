@@ -9,7 +9,7 @@ from scrapy.log import INFO
 import scraperwiki
 
 
-class OrangeCityCouncilPipeline(object):
+class CairnsRegionalCouncilPipeline(object):
     def process_item(self, item, spider):
         try:
             existing = scraperwiki.sql.select(

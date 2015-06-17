@@ -9,7 +9,7 @@ os.environ['SCRAPERWIKI_DATABASE_NAME'] = 'sqlite:///data.sqlite'
 from twisted.internet import reactor
 from scrapy.crawler import Crawler
 from scrapy import log, signals
-from orange_city_council.spiders.planningalerts import PlanningalertsSpider
+from cairns_regional_council.spiders.planningalerts import PlanningalertsSpider
 from scrapy.utils.project import get_project_settings
 
 spider = PlanningalertsSpider()

@@ -9,24 +9,27 @@ from ..items import DevelopmentApplicationItem
 
 class PlanningalertsSpider(scrapy.Spider):
     name = "planningalerts"
-    allowed_domains = ["ecouncil.orange.nsw.gov.au"]
+    allowed_domains = ["eservices.cairns.qld.gov.au"]
 
     # NOTE: Need to hit this daEnquiryInit link first, since the
     #   webapp sets up its server-side session state at this point.
     #   Trying to fetch any direct pages without this fails miserably. :(
-    SEARCH_URL = 'https://ecouncil.orange.nsw.gov.au/eservice/daEnquiryInit.do?nodeNum=24'
-    FEEDBACK_URL = 'mailto:council@orange.nsw.gov.au'
+    SEARCH_URL = 'https://eservices.cairns.qld.gov.au/eservice/daEnquiryInit.do?nodeNum=227'
+
+    # From the "how to have your say" page, at:
+    # http://www.cairns.qld.gov.au/building-planning-business/-planning/applications/have-your-say
+    FEEDBACK_URL = 'mailto:townplanner@cairns.qld.gov.au'
 
     start_urls = (
         SEARCH_URL,
     )
 
     display_to_item_fieldmap = {
-        'Application No.': 'council_reference',
+        'Reference No.': 'council_reference',
         'Date Lodged': 'date_received',
         'Property Details': 'address',
-        'Type of Work': 'description',
-        'External Reference': 'external_reference'
+        'Description of Work': 'description',
+        'File Reference': 'external_reference'
     }
 
     def _get_date_range(self):
@@ -99,8 +102,22 @@ class PlanningalertsSpider(scrapy.Spider):
 
             field_name = self.display_to_item_fieldmap.get(field_name[0].strip(), None)
             if field_name:
-                field_value = field.xpath('.//span[@class="inputField"]/text()').extract()[0]
-                result[field_name] = field_value.strip()
+
+                if field_name == 'address':
+                    # Wow. Looks like someone forced a google map link into the
+                    # markup, and make this Civica stuff even *more* finicky to crawl.
+                    # For addresses, they've replaced the text with a ul>li>a. Later, at render time,
+                    # this (for some reason) gets moved in the DOM to be a sibling element of the result <p>.
+                    # But, we don't have to worry about that - hasn't happened at point of scraping.
+                    address = field.xpath(".//a/text()").extract()
+                    if not address:
+                        continue
+                    address[0] = address[0].replace(' (map location)', '')
+                    field_value = address
+                else:
+                    field_value = field.xpath('.//span[@class="inputField"]/text()').extract()
+                if field_value:
+                    result[field_name] = field_value[0].strip()
             else:
                 continue
 
