@@ -11,24 +11,6 @@ import scraperwiki
 
 class CairnsRegionalCouncilPipeline(object):
     def process_item(self, item, spider):
-        try:
-            existing = scraperwiki.sql.select(
-                "* FROM data WHERE council_reference=?",
-                [item['council_reference']]
-            )
-        except:
-            # First run?  No file / table yet.
-            existing = False
-
-        if existing:
-            spider.log(
-                "Skipping previously saved application: {}".format(
-                    item['council_reference']
-                ),
-                level=INFO
-            )
-            return
-
         unique_keys = ['council_reference']
         scraperwiki.sql.save(unique_keys, dict(item), table_name='data')
         spider.log("Saved {}".format(item['council_reference']), level=INFO)
