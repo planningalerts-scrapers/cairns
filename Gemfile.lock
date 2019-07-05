@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/planningalerts-scrapers/civica_scraper.git
-  revision: 407d02c9b5d130b8518c1a9b6f7153f00c815c50
+  revision: 9c547156a5643a9540f52000184d0954e111f9fd
   specs:
     civica_scraper (0.1.0)
       mechanize
