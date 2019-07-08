@@ -1,1 +1,1 @@
-Development applications for [PlanningAlerts](https://www.planningalerts.org.au/).
+This scraper has been merged into planningalerts-scrapers/multiple_civica (cairns)
